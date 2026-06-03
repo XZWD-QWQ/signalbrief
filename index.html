@@ -39,83 +39,84 @@
           <div class="brand-lockup" aria-label="SignalBrief">
             <div class="brand-mark" aria-hidden="true">SB</div>
             <div>
-              <p class="eyebrow">World Product Day prototype</p>
+              <p class="eyebrow" data-i18n="prototypeLabel">World Product Day prototype</p>
               <h1>SignalBrief</h1>
             </div>
           </div>
           <div class="status-strip" aria-label="Workflow status">
-            <span>Feedback</span>
-            <span>Signals</span>
-            <span>Brief</span>
+            <span data-i18n="statusFeedback">Feedback</span>
+            <span data-i18n="statusSignals">Signals</span>
+            <span data-i18n="statusBrief">Brief</span>
+            <button class="language-toggle" id="languageToggle" type="button" aria-label="Switch language">中文</button>
           </div>
         </header>
 
         <section class="input-panel" aria-labelledby="input-title">
           <div class="panel-heading">
             <div>
-              <p class="eyebrow">Input</p>
-              <h2 id="input-title">Paste messy feedback</h2>
+              <p class="eyebrow" data-i18n="inputEyebrow">Input</p>
+              <h2 id="input-title" data-i18n="inputTitle">Paste messy feedback</h2>
             </div>
             <div class="sample-actions">
               <select id="sampleSelect" aria-label="Choose a sample feedback set">
-                <option value="saas">SaaS onboarding</option>
-                <option value="reviews">App reviews</option>
-                <option value="support">Support tickets</option>
+                <option value="saas" data-i18n="sampleSaas">SaaS onboarding</option>
+                <option value="reviews" data-i18n="sampleReviews">App reviews</option>
+                <option value="support" data-i18n="sampleSupport">Support tickets</option>
               </select>
-              <button class="ghost-button" id="loadSample" type="button">Load sample</button>
+              <button class="ghost-button" id="loadSample" type="button" data-i18n="loadSample">Load sample</button>
             </div>
           </div>
 
-          <label class="field-label" for="feedbackInput">User interviews, support notes, reviews, survey comments, or sales call fragments</label>
+          <label class="field-label" for="feedbackInput" data-i18n="feedbackLabel">User interviews, support notes, reviews, survey comments, or sales call fragments</label>
           <textarea id="feedbackInput" spellcheck="true"></textarea>
 
           <div class="controls">
             <div class="context-grid">
               <label>
-                Product area
+                <span data-i18n="productAreaLabel">Product area</span>
                 <input id="productArea" value="Early-stage product feedback">
               </label>
               <label>
-                Target user
+                <span data-i18n="targetUserLabel">Target user</span>
                 <input id="targetUser" value="Product builders and small teams">
               </label>
             </div>
-            <button class="primary-button" id="generateBrief" type="button">Generate brief</button>
+            <button class="primary-button" id="generateBrief" type="button" data-i18n="generateBrief">Generate brief</button>
           </div>
         </section>
 
         <section class="results-panel" aria-live="polite">
           <div class="panel-heading">
             <div>
-              <p class="eyebrow">Output</p>
-              <h2>Product decision brief</h2>
+              <p class="eyebrow" data-i18n="outputEyebrow">Output</p>
+              <h2 data-i18n="outputTitle">Product decision brief</h2>
             </div>
-            <button class="ghost-button" id="copyMarkdown" type="button">Copy all</button>
+            <button class="ghost-button" id="copyMarkdown" type="button" data-i18n="copyAll">Copy all</button>
           </div>
 
           <div class="empty-state" id="emptyState">
             <img class="thumbnail-preview" src="signalbrief-thumbnail.png" alt="Abstract product visual showing scattered notes becoming structured product insights.">
-            <p>Generate a brief to see pain points, opportunities, MVP priorities, and user stories.</p>
+            <p data-i18n="emptyText">Generate a brief to see pain points, opportunities, MVP priorities, and user stories.</p>
           </div>
 
           <div class="results" id="results" hidden>
             <div class="export-row" aria-label="Export options">
-              <button class="ghost-button compact-button" id="copyBrief" type="button">Copy brief</button>
-              <button class="ghost-button compact-button" id="copyRoadmap" type="button">Copy roadmap</button>
-              <button class="ghost-button compact-button" id="copyStories" type="button">Copy stories</button>
-              <button class="ghost-button compact-button" id="downloadMarkdown" type="button">Download .md</button>
+              <button class="ghost-button compact-button" id="copyBrief" type="button" data-i18n="copyBrief">Copy brief</button>
+              <button class="ghost-button compact-button" id="copyRoadmap" type="button" data-i18n="copyRoadmap">Copy roadmap</button>
+              <button class="ghost-button compact-button" id="copyStories" type="button" data-i18n="copyStories">Copy stories</button>
+              <button class="ghost-button compact-button" id="downloadMarkdown" type="button" data-i18n="downloadMd">Download .md</button>
             </div>
 
             <div class="result-tabs" role="tablist" aria-label="Brief sections">
-              <button class="tab-button is-active" type="button" role="tab" aria-selected="true" data-tab="summary">Summary</button>
-              <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab="evidence">Evidence</button>
-              <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab="roadmap">Roadmap</button>
-              <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab="brief">Brief</button>
+              <button class="tab-button is-active" type="button" role="tab" aria-selected="true" data-tab="summary" data-i18n="tabSummary">Summary</button>
+              <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab="evidence" data-i18n="tabEvidence">Evidence</button>
+              <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab="roadmap" data-i18n="tabRoadmap">Roadmap</button>
+              <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab="brief" data-i18n="tabBrief">Brief</button>
             </div>
 
             <div class="tab-panel is-active" data-panel="summary" role="tabpanel">
               <section class="brief-card summary-card">
-                <p class="card-label">Decision summary</p>
+                <p class="card-label" data-i18n="decisionSummary">Decision summary</p>
                 <h3 id="summaryTitle"></h3>
                 <p id="summaryText"></p>
               </section>
@@ -126,7 +127,7 @@
             <div class="tab-panel" data-panel="evidence" role="tabpanel" hidden>
               <section class="brief-card">
                 <div class="section-title">
-                  <h3>Pain point clusters</h3>
+                  <h3 data-i18n="painClusters">Pain point clusters</h3>
                   <span id="clusterCount"></span>
                 </div>
                 <div class="cluster-list" id="clusterList"></div>
@@ -134,8 +135,8 @@
 
               <section class="brief-card">
                 <div class="section-title">
-                  <h3>Opportunity areas</h3>
-                  <span>Ranked</span>
+                  <h3 data-i18n="opportunityAreas">Opportunity areas</h3>
+                  <span data-i18n="ranked">Ranked</span>
                 </div>
                 <div class="opportunity-list" id="opportunityList"></div>
               </section>
@@ -144,16 +145,16 @@
             <div class="tab-panel" data-panel="roadmap" role="tabpanel" hidden>
               <section class="brief-card">
                 <div class="section-title">
-                  <h3>MVP priorities</h3>
-                  <span>Now / Next / Later</span>
+                  <h3 data-i18n="mvpPriorities">MVP priorities</h3>
+                  <span data-i18n="nowNextLater">Now / Next / Later</span>
                 </div>
                 <div class="priority-grid" id="priorityGrid"></div>
               </section>
 
               <section class="brief-card">
                 <div class="section-title">
-                  <h3>User stories</h3>
-                  <span>Ready to refine</span>
+                  <h3 data-i18n="userStories">User stories</h3>
+                  <span data-i18n="readyToRefine">Ready to refine</span>
                 </div>
                 <ul class="story-list" id="storyList"></ul>
               </section>
@@ -162,15 +163,15 @@
             <div class="tab-panel" data-panel="brief" role="tabpanel" hidden>
               <section class="brief-card">
                 <div class="section-title">
-                  <h3>One-page product brief</h3>
-                  <span>Draft</span>
+                  <h3 data-i18n="onePageBrief">One-page product brief</h3>
+                  <span data-i18n="draft">Draft</span>
                 </div>
                 <div class="product-brief" id="productBrief"></div>
               </section>
 
               <div class="brief-note">
-                <strong>Use this brief as a draft.</strong>
-                <p>Validate the top opportunity with users before turning it into roadmap work.</p>
+                <strong data-i18n="briefNoteTitle">Use this brief as a draft.</strong>
+                <p data-i18n="briefNoteText">Validate the top opportunity with users before turning it into roadmap work.</p>
               </div>
             </div>
           </div>
@@ -181,5 +182,6 @@
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <!-- Paste the Novus.ai tracking snippet here before final deployment. -->
     <script src="app.js"></script>
+    <script src="i18n.js"></script>
   </body>
 </html>
