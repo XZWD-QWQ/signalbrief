@@ -90,7 +90,7 @@
               <p class="eyebrow">Output</p>
               <h2>Product decision brief</h2>
             </div>
-            <button class="ghost-button" id="copyMarkdown" type="button">Copy Markdown</button>
+            <button class="ghost-button" id="copyMarkdown" type="button">Copy all</button>
           </div>
 
           <div class="empty-state" id="emptyState">
@@ -99,53 +99,80 @@
           </div>
 
           <div class="results" id="results" hidden>
-            <section class="brief-card summary-card">
-              <p class="card-label">Decision summary</p>
-              <h3 id="summaryTitle"></h3>
-              <p id="summaryText"></p>
-            </section>
+            <div class="export-row" aria-label="Export options">
+              <button class="ghost-button compact-button" id="copyBrief" type="button">Copy brief</button>
+              <button class="ghost-button compact-button" id="copyRoadmap" type="button">Copy roadmap</button>
+              <button class="ghost-button compact-button" id="copyStories" type="button">Copy stories</button>
+              <button class="ghost-button compact-button" id="downloadMarkdown" type="button">Download .md</button>
+            </div>
 
-            <div class="metric-row" id="metricRow"></div>
+            <div class="result-tabs" role="tablist" aria-label="Brief sections">
+              <button class="tab-button is-active" type="button" role="tab" aria-selected="true" data-tab="summary">Summary</button>
+              <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab="evidence">Evidence</button>
+              <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab="roadmap">Roadmap</button>
+              <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab="brief">Brief</button>
+            </div>
 
-            <section class="brief-card">
-              <div class="section-title">
-                <h3>Pain point clusters</h3>
-                <span id="clusterCount"></span>
+            <div class="tab-panel is-active" data-panel="summary" role="tabpanel">
+              <section class="brief-card summary-card">
+                <p class="card-label">Decision summary</p>
+                <h3 id="summaryTitle"></h3>
+                <p id="summaryText"></p>
+              </section>
+
+              <div class="metric-row" id="metricRow"></div>
+            </div>
+
+            <div class="tab-panel" data-panel="evidence" role="tabpanel" hidden>
+              <section class="brief-card">
+                <div class="section-title">
+                  <h3>Pain point clusters</h3>
+                  <span id="clusterCount"></span>
+                </div>
+                <div class="cluster-list" id="clusterList"></div>
+              </section>
+
+              <section class="brief-card">
+                <div class="section-title">
+                  <h3>Opportunity areas</h3>
+                  <span>Ranked</span>
+                </div>
+                <div class="opportunity-list" id="opportunityList"></div>
+              </section>
+            </div>
+
+            <div class="tab-panel" data-panel="roadmap" role="tabpanel" hidden>
+              <section class="brief-card">
+                <div class="section-title">
+                  <h3>MVP priorities</h3>
+                  <span>Now / Next / Later</span>
+                </div>
+                <div class="priority-grid" id="priorityGrid"></div>
+              </section>
+
+              <section class="brief-card">
+                <div class="section-title">
+                  <h3>User stories</h3>
+                  <span>Ready to refine</span>
+                </div>
+                <ul class="story-list" id="storyList"></ul>
+              </section>
+            </div>
+
+            <div class="tab-panel" data-panel="brief" role="tabpanel" hidden>
+              <section class="brief-card">
+                <div class="section-title">
+                  <h3>One-page product brief</h3>
+                  <span>Draft</span>
+                </div>
+                <div class="product-brief" id="productBrief"></div>
+              </section>
+
+              <div class="brief-note">
+                <strong>Use this brief as a draft.</strong>
+                <p>Validate the top opportunity with users before turning it into roadmap work.</p>
               </div>
-              <div class="cluster-list" id="clusterList"></div>
-            </section>
-
-            <section class="brief-card">
-              <div class="section-title">
-                <h3>Opportunity areas</h3>
-                <span>Ranked</span>
-              </div>
-              <div class="opportunity-list" id="opportunityList"></div>
-            </section>
-
-            <section class="brief-card">
-              <div class="section-title">
-                <h3>MVP priorities</h3>
-                <span>Now / Next / Later</span>
-              </div>
-              <div class="priority-grid" id="priorityGrid"></div>
-            </section>
-
-            <section class="brief-card">
-              <div class="section-title">
-                <h3>User stories</h3>
-                <span>Ready to refine</span>
-              </div>
-              <ul class="story-list" id="storyList"></ul>
-            </section>
-
-            <section class="brief-card">
-              <div class="section-title">
-                <h3>One-page product brief</h3>
-                <span>Draft</span>
-              </div>
-              <div class="product-brief" id="productBrief"></div>
-            </section>
+            </div>
           </div>
         </section>
       </section>
