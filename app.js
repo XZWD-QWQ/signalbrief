@@ -1,10 +1,14 @@
-pendo.initialize({
-  visitor: {
-    id: ''
-  }
-});
+if (window.pendo && typeof window.pendo.initialize === "function") {
+  window.pendo.initialize({
+    visitor: { id: "" }
+  });
+}
 
-const sampleFeedback = `Interview 1: I get a lot of user comments from support, app reviews, and sales calls, but I do not know what to do with them after the meeting.
+const samples = {
+  saas: {
+    product: "Early-stage product feedback",
+    audience: "Product builders and small teams",
+    feedback: `Interview 1: I get a lot of user comments from support, app reviews, and sales calls, but I do not know what to do with them after the meeting.
 
 Support ticket: Users keep asking for a clearer onboarding path. They say the dashboard is powerful, but they do not know which action matters first.
 
@@ -18,48 +22,89 @@ Founder note: I want a one-page summary I can share with my team. It should incl
 
 Customer call: Please make it easier to export insights. I need to paste summaries into Notion, docs, or a weekly product update.
 
-PM note: The team does not need a perfect research repository. We need a fast way to move from raw notes to decisions.`;
+PM note: The team does not need a perfect research repository. We need a fast way to move from raw notes to decisions.`
+  },
+  reviews: {
+    product: "Mobile app review analysis",
+    audience: "Consumer app product teams",
+    feedback: `App review: The app looks clean, but I cannot find where to change my plan after signing up.
+
+App review: Notifications are helpful, but there are too many of them and I want more control.
+
+App review: I love the weekly summary, but it would be better if I could share it with my coach.
+
+App review: The first screen after login is confusing. I do not know whether I should track a habit, read insights, or invite a friend.
+
+Survey note: Users say they trust the recommendations more when the app explains the data behind them.
+
+Support note: Several users asked for an export option because they want to keep a copy in their own notes app.
+
+Product note: Retention seems strongest when users complete the first setup flow in one session.`
+  },
+  support: {
+    product: "Support ticket triage",
+    audience: "Customer success and product teams",
+    feedback: `Support ticket: Customers keep asking why their import failed, but the error message only says something went wrong.
+
+Support ticket: Admins want a way to see which teammates have not finished setup.
+
+Customer call: The dashboard has the right data, but it takes too many clicks to find the account health view.
+
+Support ticket: Users often ask whether they can export a CSV for monthly reporting.
+
+CSM note: The highest-value accounts want faster answers about adoption, usage gaps, and renewal risk.
+
+Support ticket: The help docs are detailed, but users want the product to guide them before they need to search docs.
+
+Product note: We need a better way to turn recurring tickets into roadmap candidates.`
+  }
+};
 
 const patterns = [
   {
     key: "prioritization",
     label: "Prioritization confusion",
-    terms: ["priority", "prioritize", "prioritization", "roadmap", "important", "decide", "decision", "debating"],
+    terms: ["priority", "prioritize", "prioritization", "roadmap", "important", "decide", "decision", "debating", "candidates"],
     opportunity: "Help teams convert noisy feedback into ranked opportunities with visible reasoning.",
     mvp: "Evidence-backed priority ranking",
-    story: "As a product builder, I want feedback themes ranked by urgency and evidence so I can choose the next MVP bet with confidence."
+    story: "As a product builder, I want feedback themes ranked by urgency and evidence so I can choose the next MVP bet with confidence.",
+    experiment: "Give three product builders the same feedback set and compare whether SignalBrief helps them converge on the same top priority."
   },
   {
     key: "clarity",
     label: "Lack of clarity",
-    terms: ["clear", "confusing", "explain", "random", "why", "understand", "know", "onboarding"],
+    terms: ["clear", "confusing", "explain", "random", "why", "understand", "know", "onboarding", "error", "guide"],
     opportunity: "Make the next best action obvious and explain why each recommendation matters.",
     mvp: "Plain-language rationale for each insight",
-    story: "As a user, I want each recommendation explained in simple language so I understand what action to take next."
+    story: "As a user, I want each recommendation explained in simple language so I understand what action to take next.",
+    experiment: "Ask users to read the generated rationale and mark whether they would trust the recommendation."
   },
   {
     key: "fragmentation",
     label: "Scattered feedback sources",
-    terms: ["support", "reviews", "sales", "survey", "comments", "calls", "notes", "spreadsheets"],
+    terms: ["support", "reviews", "sales", "survey", "comments", "calls", "notes", "spreadsheets", "tickets", "import"],
     opportunity: "Create one lightweight place where mixed feedback can become structured product signals.",
     mvp: "Paste-anything feedback intake",
-    story: "As a maker, I want to paste notes from many sources into one workflow so I can find patterns without manual cleanup."
+    story: "As a maker, I want to paste notes from many sources into one workflow so I can find patterns without manual cleanup.",
+    experiment: "Test whether users can paste five mixed sources and still understand the resulting clusters without extra setup."
   },
   {
     key: "sharing",
     label: "Hard to share decisions",
-    terms: ["share", "summary", "export", "notion", "docs", "weekly", "team", "one-page"],
+    terms: ["share", "summary", "export", "notion", "docs", "weekly", "team", "one-page", "csv", "reporting"],
     opportunity: "Turn analysis into a concise brief that can be shared with teams and stakeholders.",
     mvp: "One-page brief and Markdown export",
-    story: "As a PM, I want a concise product brief I can share with my team so feedback becomes a decision artifact."
+    story: "As a PM, I want a concise product brief I can share with my team so feedback becomes a decision artifact.",
+    experiment: "Give the exported brief to a teammate and ask whether they can explain the top opportunity in one minute."
   },
   {
     key: "speed",
     label: "Slow manual workflow",
-    terms: ["hours", "fast", "spending", "manual", "repository", "move from", "raw notes", "workflow"],
+    terms: ["hours", "fast", "spending", "manual", "repository", "move from", "raw notes", "workflow", "clicks", "faster"],
     opportunity: "Reduce the time between collecting feedback and making a product decision.",
     mvp: "One-click feedback-to-brief generation",
-    story: "As a founder, I want a fast first draft from raw notes so I can spend more time judging the decision than formatting it."
+    story: "As a founder, I want a fast first draft from raw notes so I can spend more time judging the decision than formatting it.",
+    experiment: "Time how long it takes a user to move from raw notes to a shareable brief with and without SignalBrief."
   }
 ];
 
@@ -78,6 +123,7 @@ const state = {
 const input = document.querySelector("#feedbackInput");
 const productArea = document.querySelector("#productArea");
 const targetUser = document.querySelector("#targetUser");
+const sampleSelect = document.querySelector("#sampleSelect");
 const loadSample = document.querySelector("#loadSample");
 const generateBrief = document.querySelector("#generateBrief");
 const copyMarkdown = document.querySelector("#copyMarkdown");
@@ -86,20 +132,33 @@ const emptyState = document.querySelector("#emptyState");
 const toast = document.querySelector("#toast");
 
 loadSample.addEventListener("click", () => {
-  input.value = sampleFeedback;
+  loadSelectedSample();
   showToast("Sample feedback loaded.");
   input.focus();
+});
+
+sampleSelect.addEventListener("change", () => {
+  loadSelectedSample();
 });
 
 generateBrief.addEventListener("click", () => {
   const raw = input.value.trim();
   if (!raw) {
-    showToast("Paste feedback or load the sample first.");
+    showToast("Paste feedback or load a sample first.");
     return;
   }
 
-  const analysis = analyzeFeedback(raw, productArea.value.trim(), targetUser.value.trim());
-  renderAnalysis(analysis);
+  setGenerating(true);
+  window.setTimeout(() => {
+    const analysis = analyzeFeedback(raw, productArea.value.trim(), targetUser.value.trim());
+    renderAnalysis(analysis);
+    setGenerating(false);
+    trackEvent("brief_generated", {
+      sample: sampleSelect.value,
+      signals: analysis.clusters.length,
+      confidence: analysis.overallConfidence
+    });
+  }, 420);
 });
 
 copyMarkdown.addEventListener("click", async () => {
@@ -110,11 +169,19 @@ copyMarkdown.addEventListener("click", async () => {
 
   try {
     await navigator.clipboard.writeText(state.markdown);
+    trackEvent("markdown_copied", { sample: sampleSelect.value });
     showToast("Markdown copied.");
   } catch {
     showToast("Copy failed. Select the brief text manually.");
   }
 });
+
+function loadSelectedSample() {
+  const sample = samples[sampleSelect.value] || samples.saas;
+  input.value = sample.feedback;
+  productArea.value = sample.product;
+  targetUser.value = sample.audience;
+}
 
 function analyzeFeedback(raw, product, audience) {
   const snippets = raw
@@ -130,11 +197,14 @@ function analyzeFeedback(raw, product, audience) {
         const regex = new RegExp(`\\b${escapeRegExp(term)}\\b`, "gi");
         return total + (raw.match(regex) || []).length;
       }, 0);
+      const evidenceQuotes = findEvidenceQuotes(snippets, pattern.terms);
 
       return {
         ...pattern,
         score: hits,
-        evidence: findEvidence(snippets, pattern.terms)
+        confidence: getConfidence(hits, snippets.length),
+        evidenceQuotes,
+        evidence: evidenceQuotes[0] || ""
       };
     })
     .sort((a, b) => b.score - a.score);
@@ -144,13 +214,15 @@ function analyzeFeedback(raw, product, audience) {
   const opportunities = clusters.slice(0, 3).map((cluster, index) => ({
     title: cluster.opportunity || `Clarify ${cluster.label.toLowerCase()}`,
     why: cluster.evidence || "This theme appears repeatedly in the submitted feedback.",
-    confidence: index === 0 ? "High" : index === 1 ? "Medium" : "Directional"
+    confidence: cluster.confidence || (index === 0 ? "High" : index === 1 ? "Medium" : "Directional"),
+    experiment: cluster.experiment || "Validate this opportunity with three target users before building."
   }));
 
   const priorities = buildPriorities(clusters);
   const stories = clusters.slice(0, 4).map((cluster) => cluster.story || `As a ${audience || "user"}, I want ${cluster.label.toLowerCase()} addressed so I can move faster with less uncertainty.`);
   const mainTheme = clusters[0]?.label || "Feedback clarity";
   const secondaryTheme = clusters[1]?.label || "Decision support";
+  const overallConfidence = getOverallConfidence(clusters, snippets.length);
 
   return {
     product: product || "Product feedback workflow",
@@ -161,19 +233,22 @@ function analyzeFeedback(raw, product, audience) {
     opportunities,
     priorities,
     stories,
+    overallConfidence,
     summaryTitle: `${mainTheme} is the strongest signal`,
     summaryText: `The feedback suggests ${audience || "the target users"} need a faster path from raw notes to product decisions. The best MVP angle is to combine ${mainTheme.toLowerCase()} with ${secondaryTheme.toLowerCase()}, then package the result as a shareable one-page brief.`,
-    sourceTone: detectTone(lower)
+    sourceTone: detectTone(lower),
+    nextExperiment: opportunities[0]?.experiment || "Run a short usability test with three target users."
   };
 }
 
-function findEvidence(snippets, terms) {
-  const found = snippets.find((snippet) => {
-    const lower = snippet.toLowerCase();
-    return terms.some((term) => lower.includes(term));
-  });
-
-  return found ? trimText(found.replace(/^[^:]{1,28}:\s*/, ""), 150) : "";
+function findEvidenceQuotes(snippets, terms) {
+  return snippets
+    .filter((snippet) => {
+      const lower = snippet.toLowerCase();
+      return terms.some((term) => lower.includes(term));
+    })
+    .slice(0, 2)
+    .map((snippet) => trimText(snippet.replace(/^[^:]{1,28}:\s*/, ""), 170));
 }
 
 function createFallbackClusters(snippets) {
@@ -181,10 +256,13 @@ function createFallbackClusters(snippets) {
     key: label.toLowerCase().replaceAll(" ", "-"),
     label,
     score: Math.max(1, snippets.length - index),
-    evidence: snippets[index] ? trimText(snippets[index], 150) : "The submitted feedback points to this area as a possible product signal.",
+    confidence: index === 0 ? "Medium" : "Directional",
+    evidenceQuotes: snippets[index] ? [trimText(snippets[index], 170)] : [],
+    evidence: snippets[index] ? trimText(snippets[index], 170) : "The submitted feedback points to this area as a possible product signal.",
     opportunity: `Explore how ${label.toLowerCase()} affects the user's ability to make progress.`,
     mvp: `${label} diagnostic`,
-    story: `As a user, I want help with ${label.toLowerCase()} so I can make progress without guessing.`
+    story: `As a user, I want help with ${label.toLowerCase()} so I can make progress without guessing.`,
+    experiment: `Interview users about ${label.toLowerCase()} and confirm whether it blocks progress.`
   }));
 }
 
@@ -216,8 +294,8 @@ function buildPriorities(clusters) {
 }
 
 function detectTone(lower) {
-  const urgentWords = ["urgent", "blocked", "broken", "frustrated", "confusing", "hard", "problem"];
-  const positiveWords = ["like", "love", "useful", "powerful", "help", "easier"];
+  const urgentWords = ["urgent", "blocked", "broken", "frustrated", "confusing", "hard", "problem", "failed", "too many"];
+  const positiveWords = ["like", "love", "useful", "powerful", "help", "easier", "clean", "trust"];
   const urgent = urgentWords.filter((word) => lower.includes(word)).length;
   const positive = positiveWords.filter((word) => lower.includes(word)).length;
 
@@ -256,7 +334,7 @@ function renderMetrics(analysis) {
     ["Sources", analysis.snippetCount],
     ["Words", analysis.wordCount],
     ["Signals", analysis.clusters.length],
-    ["Tone", analysis.sourceTone]
+    ["Confidence", analysis.overallConfidence]
   ];
 
   document.querySelector("#metricRow").innerHTML = metrics
@@ -269,12 +347,28 @@ function renderClusters(clusters) {
     .map(
       (cluster) => `
         <article class="cluster-item">
-          <strong>${escapeHtml(cluster.label)}</strong>
+          <div class="item-title-row">
+            <strong>${escapeHtml(cluster.label)}</strong>
+            <span class="confidence-pill">${escapeHtml(cluster.confidence || "Directional")}</span>
+          </div>
           <p>${escapeHtml(cluster.evidence || "This theme appears in the feedback and should be validated with users.")}</p>
+          ${renderQuotes(cluster.evidenceQuotes)}
         </article>
       `
     )
     .join("");
+}
+
+function renderQuotes(quotes = []) {
+  if (!quotes.length) {
+    return "";
+  }
+
+  return `
+    <div class="quote-list">
+      ${quotes.map((quote) => `<blockquote>${escapeHtml(quote)}</blockquote>`).join("")}
+    </div>
+  `;
 }
 
 function renderOpportunities(opportunities) {
@@ -285,7 +379,8 @@ function renderOpportunities(opportunities) {
           <span class="rank">${index + 1}</span>
           <div>
             <strong>${escapeHtml(item.title)}</strong>
-            <p>${escapeHtml(item.why)} Confidence: ${escapeHtml(item.confidence)}.</p>
+            <p>${escapeHtml(item.why)}</p>
+            <p class="experiment"><span>Experiment:</span> ${escapeHtml(item.experiment)}</p>
           </div>
         </article>
       `
@@ -314,10 +409,12 @@ function renderProductBrief(analysis) {
   const rows = [
     ["Target user", analysis.audience],
     ["Problem", `${analysis.audience} struggle to turn mixed feedback into clear product priorities.`],
-    ["Proposed solution", `A focused workflow that analyzes feedback, identifies patterns, ranks opportunities, and creates a one-page brief.`],
+    ["Proposed solution", "A focused workflow that analyzes feedback, identifies patterns, ranks opportunities, and creates a one-page brief."],
     ["MVP bet", analysis.priorities[0].title],
+    ["Confidence", `${analysis.overallConfidence}. The current signal strength comes from ${analysis.snippetCount} feedback sources.`],
+    ["Risk / assumption", "The analysis is only as good as the feedback sample. More diverse sources should improve confidence."],
     ["Success metric", "A user can move from raw notes to a shareable product brief in under five minutes."],
-    ["Next experiment", "Give three product builders the sample workflow and ask whether the output changes what they would build next."]
+    ["Next experiment", analysis.nextExperiment]
   ];
 
   document.querySelector("#productBrief").innerHTML = rows
@@ -333,8 +430,13 @@ function renderProductBrief(analysis) {
 }
 
 function toMarkdown(analysis) {
-  const clusterText = analysis.clusters.map((cluster) => `- **${cluster.label}:** ${cluster.evidence}`).join("\n");
-  const opportunityText = analysis.opportunities.map((item, index) => `${index + 1}. **${item.title}** - ${item.why} Confidence: ${item.confidence}.`).join("\n");
+  const clusterText = analysis.clusters
+    .map((cluster) => {
+      const quotes = (cluster.evidenceQuotes || []).map((quote) => `  - Evidence: "${quote}"`).join("\n");
+      return `- **${cluster.label} (${cluster.confidence}):** ${cluster.evidence}${quotes ? `\n${quotes}` : ""}`;
+    })
+    .join("\n");
+  const opportunityText = analysis.opportunities.map((item, index) => `${index + 1}. **${item.title}** - ${item.why}\n   - Experiment: ${item.experiment}`).join("\n");
   const priorityText = analysis.priorities.map((item) => `- **${item.phase}: ${item.title}** - ${item.detail}`).join("\n");
   const storyText = analysis.stories.map((story) => `- ${story}`).join("\n");
 
@@ -360,9 +462,48 @@ ${storyText}
 - **Problem:** ${analysis.audience} struggle to turn mixed feedback into clear product priorities.
 - **Proposed solution:** A focused workflow that analyzes feedback, identifies patterns, ranks opportunities, and creates a one-page brief.
 - **MVP bet:** ${analysis.priorities[0].title}
+- **Confidence:** ${analysis.overallConfidence}
+- **Risk / assumption:** The analysis is only as good as the feedback sample. More diverse sources should improve confidence.
 - **Success metric:** A user can move from raw notes to a shareable product brief in under five minutes.
-- **Next experiment:** Give three product builders the sample workflow and ask whether the output changes what they would build next.
+- **Next experiment:** ${analysis.nextExperiment}
 `;
+}
+
+function getConfidence(hits, sourceCount) {
+  if (hits >= 4 || (hits >= 3 && sourceCount >= 6)) {
+    return "High";
+  }
+
+  if (hits >= 2) {
+    return "Medium";
+  }
+
+  return "Directional";
+}
+
+function getOverallConfidence(clusters, sourceCount) {
+  const strongSignals = clusters.filter((cluster) => cluster.score >= 3).length;
+  if (strongSignals >= 2 && sourceCount >= 6) {
+    return "High";
+  }
+
+  if (clusters.length >= 3 && sourceCount >= 4) {
+    return "Medium";
+  }
+
+  return "Directional";
+}
+
+function setGenerating(isGenerating) {
+  generateBrief.disabled = isGenerating;
+  generateBrief.textContent = isGenerating ? "Analyzing..." : "Generate brief";
+  generateBrief.classList.toggle("is-loading", isGenerating);
+}
+
+function trackEvent(name, data = {}) {
+  if (window.pendo && typeof window.pendo.track === "function") {
+    window.pendo.track(name, data);
+  }
 }
 
 function showToast(message) {
@@ -389,7 +530,7 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-input.value = sampleFeedback;
+loadSelectedSample();
 
 if (new URLSearchParams(window.location.search).get("demo") === "1") {
   window.requestAnimationFrame(() => {
