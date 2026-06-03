@@ -10,13 +10,26 @@
     >
     <link rel="stylesheet" href="styles.css">
     <script>
-    (function(apiKey){
-        (function(p,e,n,d,o){var v,w,x,y,z;o=p[d]=p[d]||{};o._q=o._q||[];
-        v=['initialize','identify','updateOptions','pageLoad','track', 'trackAgent'];for(w=0,x=v.length;w<x;++w)(function(m){
-        o[m]=o[m]||function(){o._q[m===v[0]?'unshift':'push']([m].concat([].slice.call(arguments,0)));};})(v[w]);
-        y=e.createElement(n);y.async=!0;y.src='https://cdn.pendo.io/agent/static/'+apiKey+'/pendo.js';
-        z=e.getElementsByTagName(n)[0];z.parentNode.insertBefore(y,z);})(window,document,'script','pendo');
-    })('26772e54-ae3a-4507-b2e1-2e746e482217');
+      (function(apiKey) {
+        (function(p, e, n, d, o) {
+          var v, w, x, y, z;
+          o = p[d] = p[d] || {};
+          o._q = o._q || [];
+          v = ["initialize", "identify", "updateOptions", "pageLoad", "track"];
+          for (w = 0, x = v.length; w < x; ++w) {
+            (function(m) {
+              o[m] = o[m] || function() {
+                o._q[m === v[0] ? "unshift" : "push"]([m].concat([].slice.call(arguments, 0)));
+              };
+            })(v[w]);
+          }
+          y = e.createElement(n);
+          y.async = true;
+          y.src = "https://cdn.pendo.io/agent/static/" + apiKey + "/pendo.js";
+          z = e.getElementsByTagName(n)[0];
+          z.parentNode.insertBefore(y, z);
+        })(window, document, "script", "pendo");
+      })("26772e54-ae3a-4507-b2e1-2e746e482217");
     </script>
   </head>
   <body>
@@ -43,7 +56,14 @@
               <p class="eyebrow">Input</p>
               <h2 id="input-title">Paste messy feedback</h2>
             </div>
-            <button class="ghost-button" id="loadSample" type="button">Load sample</button>
+            <div class="sample-actions">
+              <select id="sampleSelect" aria-label="Choose a sample feedback set">
+                <option value="saas">SaaS onboarding</option>
+                <option value="reviews">App reviews</option>
+                <option value="support">Support tickets</option>
+              </select>
+              <button class="ghost-button" id="loadSample" type="button">Load sample</button>
+            </div>
           </div>
 
           <label class="field-label" for="feedbackInput">User interviews, support notes, reviews, survey comments, or sales call fragments</label>
