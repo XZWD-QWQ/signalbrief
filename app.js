@@ -127,6 +127,12 @@ const sampleSelect = document.querySelector("#sampleSelect");
 const loadSample = document.querySelector("#loadSample");
 const generateBrief = document.querySelector("#generateBrief");
 const copyMarkdown = document.querySelector("#copyMarkdown");
+const copyBrief = document.querySelector("#copyBrief");
+const copyRoadmap = document.querySelector("#copyRoadmap");
+const copyStories = document.querySelector("#copyStories");
+const downloadMarkdown = document.querySelector("#downloadMarkdown");
+const tabButtons = [...document.querySelectorAll(".tab-button")];
+const tabPanels = [...document.querySelectorAll(".tab-panel")];
 const results = document.querySelector("#results");
 const emptyState = document.querySelector("#emptyState");
 const toast = document.querySelector("#toast");
@@ -162,18 +168,45 @@ generateBrief.addEventListener("click", () => {
 });
 
 copyMarkdown.addEventListener("click", async () => {
+  await copyText(state.markdown, "Full brief copied.", "all_markdown_copied");
+});
+
+copyBrief.addEventListener("click", async () => {
+  await copyText(state.briefMarkdown, "Brief copied.", "brief_copied");
+});
+
+copyRoadmap.addEventListener("click", async () => {
+  await copyText(state.roadmapMarkdown, "Roadmap copied.", "roadmap_copied");
+});
+
+copyStories.addEventListener("click", async () => {
+  await copyText(state.storiesMarkdown, "Stories copied.", "stories_copied");
+});
+
+downloadMarkdown.addEventListener("click", () => {
   if (!state.markdown) {
     showToast("Generate a brief first.");
     return;
   }
 
-  try {
-    await navigator.clipboard.writeText(state.markdown);
-    trackEvent("markdown_copied", { sample: sampleSelect.value });
-    showToast("Markdown copied.");
-  } catch {
-    showToast("Copy failed. Select the brief text manually.");
-  }
+  const blob = new Blob([state.markdown], { type: "text/markdown;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "signalbrief-product-brief.md";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  trackEvent("markdown_downloaded", { sample: sampleSelect.value });
+  showToast("Markdown downloaded.");
+});
+
+tabButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    setActiveTab(button.dataset.tab);
+    trackEvent("result_tab_opened", { tab: button.dataset.tab });
+  });
 });
 
 function loadSelectedSample() {
@@ -326,6 +359,10 @@ function renderAnalysis(analysis) {
   renderProductBrief(analysis);
 
   state.markdown = toMarkdown(analysis);
+  state.briefMarkdown = toBriefMarkdown(analysis);
+  state.roadmapMarkdown = toRoadmapMarkdown(analysis);
+  state.storiesMarkdown = toStoriesMarkdown(analysis);
+  setActiveTab("summary");
   showToast("Brief generated.");
 }
 
@@ -467,6 +504,70 @@ ${storyText}
 - **Success metric:** A user can move from raw notes to a shareable product brief in under five minutes.
 - **Next experiment:** ${analysis.nextExperiment}
 `;
+}
+
+function toBriefMarkdown(analysis) {
+  return `# One-page product brief
+
+- **Target user:** ${analysis.audience}
+- **Problem:** ${analysis.audience} struggle to turn mixed feedback into clear product priorities.
+- **Proposed solution:** A focused workflow that analyzes feedback, identifies patterns, ranks opportunities, and creates a one-page brief.
+- **MVP bet:** ${analysis.priorities[0].title}
+- **Confidence:** ${analysis.overallConfidence}
+- **Risk / assumption:** The analysis is only as good as the feedback sample. More diverse sources should improve confidence.
+- **Success metric:** A user can move from raw notes to a shareable product brief in under five minutes.
+- **Next experiment:** ${analysis.nextExperiment}
+`;
+}
+
+function toRoadmapMarkdown(analysis) {
+  const priorities = analysis.priorities.map((item) => `- **${item.phase}: ${item.title}** - ${item.detail}`).join("\n");
+  const opportunities = analysis.opportunities.map((item, index) => `${index + 1}. **${item.title}**\n   - Why: ${item.why}\n   - Experiment: ${item.experiment}`).join("\n");
+
+  return `# Roadmap draft
+
+## Opportunity areas
+${opportunities}
+
+## MVP priorities
+${priorities}
+`;
+}
+
+function toStoriesMarkdown(analysis) {
+  return `# User stories
+
+${analysis.stories.map((story) => `- ${story}`).join("\n")}
+`;
+}
+
+async function copyText(text, successMessage, eventName) {
+  if (!text) {
+    showToast("Generate a brief first.");
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(text);
+    trackEvent(eventName, { sample: sampleSelect.value });
+    showToast(successMessage);
+  } catch {
+    showToast("Copy failed. Select the brief text manually.");
+  }
+}
+
+function setActiveTab(tabName) {
+  tabButtons.forEach((button) => {
+    const isActive = button.dataset.tab === tabName;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-selected", String(isActive));
+  });
+
+  tabPanels.forEach((panel) => {
+    const isActive = panel.dataset.panel === tabName;
+    panel.hidden = !isActive;
+    panel.classList.toggle("is-active", isActive);
+  });
 }
 
 function getConfidence(hits, sourceCount) {
