@@ -80,9 +80,17 @@ const emptyState = document.querySelector("#emptyState");
 const toast = document.querySelector("#toast");
 
 loadSample.addEventListener("click", () => {
+  const feedbackFieldWasEmpty = input.value.trim().length === 0;
+  const previousFeedbackLength = input.value.length;
+
   input.value = sampleFeedback;
   showToast("Sample feedback loaded.");
   input.focus();
+
+  pendo.track("sample_feedback_loaded", {
+    feedbackFieldWasEmpty,
+    previousFeedbackLength
+  });
 });
 
 generateBrief.addEventListener("click", () => {
@@ -92,8 +100,36 @@ generateBrief.addEventListener("click", () => {
     return;
   }
 
+  const isSampleFeedback = raw === sampleFeedback.trim();
+  const words = raw.split(/\s+/).filter(Boolean);
+  const lines = raw.split(/\n+/).filter((l) => l.trim());
+
+  pendo.track("feedback_submitted", {
+    feedbackLength: raw.length,
+    wordCount: words.length,
+    lineCount: lines.length,
+    productAreaValue: productArea.value.trim() || "",
+    targetUserValue: targetUser.value.trim() || "",
+    isSampleFeedback,
+    containsMultipleSources: lines.length > 1
+  });
+
   const analysis = analyzeFeedback(raw, productArea.value.trim(), targetUser.value.trim());
   renderAnalysis(analysis);
+
+  pendo.track("brief_generated", {
+    wordCount: analysis.wordCount,
+    snippetCount: analysis.snippetCount,
+    clusterCount: analysis.clusters.length,
+    sourceTone: analysis.sourceTone,
+    productArea: productArea.value.trim() || "",
+    targetUser: targetUser.value.trim() || "",
+    topSignalLabel: analysis.clusters[0]?.label || "",
+    topSignalScore: analysis.clusters[0]?.score || 0,
+    opportunityCount: analysis.opportunities.length,
+    storyCount: analysis.stories.length,
+    usedSampleFeedback: isSampleFeedback
+  });
 });
 
 copyMarkdown.addEventListener("click", async () => {
@@ -105,6 +141,14 @@ copyMarkdown.addEventListener("click", async () => {
   try {
     await navigator.clipboard.writeText(state.markdown);
     showToast("Markdown copied.");
+
+    pendo.track("brief_markdown_copied", {
+      markdownLength: state.markdown.length,
+      clusterCount: (state.markdown.match(/\*\*.*?:\*\*/g) || []).length,
+      productArea: productArea.value.trim() || "",
+      targetUser: targetUser.value.trim() || "",
+      sourceTone: document.querySelector("#metricRow")?.textContent.includes("Pain-led") ? "Pain-led" : document.querySelector("#metricRow")?.textContent.includes("Opportunity-led") ? "Opportunity-led" : "Mixed"
+    });
   } catch {
     showToast("Copy failed. Select the brief text manually.");
   }
@@ -135,6 +179,18 @@ function analyzeFeedback(raw, product, audience) {
 
   const active = scored.filter((item) => item.score > 0).slice(0, 4);
   const clusters = active.length ? active : createFallbackClusters(snippets);
+  const usedFallbackClusters = active.length === 0;
+
+  pendo.track("signal_analysis_completed", {
+    totalPatternsMatched: scored.filter((item) => item.score > 0).length,
+    activeClusterCount: clusters.length,
+    usedFallbackClusters,
+    topClusterKey: clusters[0]?.key || "",
+    topClusterScore: clusters[0]?.score || 0,
+    secondClusterKey: clusters[1]?.key || "",
+    secondClusterScore: clusters[1]?.score || 0,
+    sourceTone: detectTone(lower)
+  });
   const opportunities = clusters.slice(0, 3).map((cluster, index) => ({
     title: cluster.opportunity || `Clarify ${cluster.label.toLowerCase()}`,
     why: cluster.evidence || "This theme appears repeatedly in the submitted feedback.",
@@ -386,6 +442,11 @@ function escapeHtml(value) {
 input.value = sampleFeedback;
 
 if (new URLSearchParams(window.location.search).get("demo") === "1") {
+  pendo.track("demo_brief_auto_generated", {
+    referrer: document.referrer || "",
+    urlParams: window.location.search
+  });
+
   window.requestAnimationFrame(() => {
     generateBrief.click();
   });
