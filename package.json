@@ -1,0 +1,19 @@
+{
+  "name": "signalbrief",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Turn messy user feedback into clear product opportunities, MVP priorities, and a one-page product brief.",
+  "scripts": {
+    "start": "python -m http.server 4173 --bind 127.0.0.1",
+    "check": "node --check app.js"
+  },
+  "keywords": [
+    "hackathon",
+    "product-management",
+    "feedback",
+    "ai",
+    "prototype"
+  ],
+  "author": "SignalBrief",
+  "license": "MIT"
+}

@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SignalBrief</title>
+    <meta
+      name="description"
+      content="SignalBrief turns messy user feedback into clear product opportunities, MVP priorities, and a one-page product brief."
+    >
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workspace" aria-label="SignalBrief workspace">
+        <header class="topbar">
+          <div class="brand-lockup" aria-label="SignalBrief">
+            <div class="brand-mark" aria-hidden="true">SB</div>
+            <div>
+              <p class="eyebrow">World Product Day prototype</p>
+              <h1>SignalBrief</h1>
+            </div>
+          </div>
+          <div class="status-strip" aria-label="Workflow status">
+            <span>Feedback</span>
+            <span>Signals</span>
+            <span>Brief</span>
+          </div>
+        </header>
+
+        <section class="input-panel" aria-labelledby="input-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Input</p>
+              <h2 id="input-title">Paste messy feedback</h2>
+            </div>
+            <button class="ghost-button" id="loadSample" type="button">Load sample</button>
+          </div>
+
+          <label class="field-label" for="feedbackInput">User interviews, support notes, reviews, survey comments, or sales call fragments</label>
+          <textarea id="feedbackInput" spellcheck="true"></textarea>
+
+          <div class="controls">
+            <div class="context-grid">
+              <label>
+                Product area
+                <input id="productArea" value="Early-stage product feedback">
+              </label>
+              <label>
+                Target user
+                <input id="targetUser" value="Product builders and small teams">
+              </label>
+            </div>
+            <button class="primary-button" id="generateBrief" type="button">Generate brief</button>
+          </div>
+        </section>
+
+        <section class="results-panel" aria-live="polite">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Output</p>
+              <h2>Product decision brief</h2>
+            </div>
+            <button class="ghost-button" id="copyMarkdown" type="button">Copy Markdown</button>
+          </div>
+
+          <div class="empty-state" id="emptyState">
+            <img class="thumbnail-preview" src="signalbrief-thumbnail.png" alt="Abstract product visual showing scattered notes becoming structured product insights.">
+            <p>Generate a brief to see pain points, opportunities, MVP priorities, and user stories.</p>
+          </div>
+
+          <div class="results" id="results" hidden>
+            <section class="brief-card summary-card">
+              <p class="card-label">Decision summary</p>
+              <h3 id="summaryTitle"></h3>
+              <p id="summaryText"></p>
+            </section>
+
+            <div class="metric-row" id="metricRow"></div>
+
+            <section class="brief-card">
+              <div class="section-title">
+                <h3>Pain point clusters</h3>
+                <span id="clusterCount"></span>
+              </div>
+              <div class="cluster-list" id="clusterList"></div>
+            </section>
+
+            <section class="brief-card">
+              <div class="section-title">
+                <h3>Opportunity areas</h3>
+                <span>Ranked</span>
+              </div>
+              <div class="opportunity-list" id="opportunityList"></div>
+            </section>
+
+            <section class="brief-card">
+              <div class="section-title">
+                <h3>MVP priorities</h3>
+                <span>Now / Next / Later</span>
+              </div>
+              <div class="priority-grid" id="priorityGrid"></div>
+            </section>
+
+            <section class="brief-card">
+              <div class="section-title">
+                <h3>User stories</h3>
+                <span>Ready to refine</span>
+              </div>
+              <ul class="story-list" id="storyList"></ul>
+            </section>
+
+            <section class="brief-card">
+              <div class="section-title">
+                <h3>One-page product brief</h3>
+                <span>Draft</span>
+              </div>
+              <div class="product-brief" id="productBrief"></div>
+            </section>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <!-- Paste the Novus.ai tracking snippet here before final deployment. -->
+    <script src="app.js"></script>
+  </body>
+</html>

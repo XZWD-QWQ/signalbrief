@@ -1,0 +1,10 @@
+Paste your Novus.ai tracking snippet in index.html immediately above:
+
+<script src="app.js"></script>
+
+After deployment:
+1. Open the public URL.
+2. Click "Generate brief" once or twice.
+3. Confirm the activity appears in Novus.ai.
+4. Take a Novus dashboard screenshot.
+5. Upload that screenshot to the Devpost image gallery.
