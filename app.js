@@ -1,3 +1,9 @@
+pendo.initialize({
+  visitor: {
+    id: ''
+  }
+});
+
 const sampleFeedback = `Interview 1: I get a lot of user comments from support, app reviews, and sales calls, but I do not know what to do with them after the meeting.
 
 Support ticket: Users keep asking for a clearer onboarding path. They say the dashboard is powerful, but they do not know which action matters first.
