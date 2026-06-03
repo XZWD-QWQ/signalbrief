@@ -268,6 +268,13 @@ select {
   border-color: var(--blue);
 }
 
+.compact-button {
+  min-width: auto;
+  min-height: 40px;
+  padding: 0 12px;
+  font-size: 0.84rem;
+}
+
 .results-panel {
   overflow: auto;
 }
@@ -300,6 +307,51 @@ select {
   display: grid;
   gap: 14px;
   margin-top: 18px;
+}
+
+.export-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.result-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  background: #f7f4eb;
+}
+
+.tab-button {
+  min-height: 38px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.tab-button:hover {
+  color: var(--blue-dark);
+}
+
+.tab-button.is-active {
+  border-color: rgba(24, 90, 125, 0.2);
+  background: #fffdf8;
+  color: var(--blue-dark);
+  box-shadow: 0 6px 18px rgba(16, 36, 47, 0.08);
+}
+
+.tab-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.tab-panel[hidden] {
+  display: none;
 }
 
 .brief-card {
@@ -379,6 +431,22 @@ select {
   padding: 12px;
   border: 1px solid rgba(16, 36, 47, 0.12);
   background: #fbf8f1;
+}
+
+.brief-note {
+  padding: 14px;
+  border: 1px solid rgba(15, 118, 110, 0.22);
+  background: rgba(15, 118, 110, 0.08);
+}
+
+.brief-note strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.brief-note p {
+  margin-bottom: 0;
+  color: var(--muted);
 }
 
 .item-title-row {
@@ -557,7 +625,9 @@ select {
 @media (max-width: 700px) {
   .context-grid,
   .metric-row,
-  .priority-grid {
+  .priority-grid,
+  .export-row,
+  .result-tabs {
     grid-template-columns: 1fr;
   }
 
