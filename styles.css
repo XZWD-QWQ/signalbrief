@@ -122,7 +122,8 @@ h3 {
   gap: 8px;
 }
 
-.status-strip span {
+.status-strip span,
+.language-toggle {
   min-width: 88px;
   padding: 8px 12px;
   border: 1px solid rgba(16, 36, 47, 0.13);
@@ -132,6 +133,16 @@ h3 {
   font-size: 0.82rem;
   font-weight: 700;
   text-align: center;
+}
+
+.language-toggle {
+  cursor: pointer;
+  background: var(--ink);
+  color: #fffdf8;
+}
+
+.language-toggle:hover {
+  background: var(--blue-dark);
 }
 
 .input-panel,
