@@ -9,6 +9,7 @@
       content="SignalBrief turns messy user feedback into clear product opportunities, MVP priorities, and a one-page product brief."
     >
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="award.css">
     <script>
       (function(apiKey) {
         (function(p, e, n, d, o) {
@@ -41,6 +42,7 @@
             <div>
               <p class="eyebrow" data-i18n="prototypeLabel">World Product Day prototype</p>
               <h1>SignalBrief</h1>
+              <p class="product-tagline" data-award-i18n="productTagline">Bilingual product decision assistant for turning feedback into evidence-backed action.</p>
             </div>
           </div>
           <div class="status-strip" aria-label="Workflow status">
@@ -122,6 +124,29 @@
               </section>
 
               <div class="metric-row" id="metricRow"></div>
+
+              <div class="decision-grid">
+                <section class="decision-card confidence-card">
+                  <p class="card-label" data-award-i18n="confidenceScoreLabel">Decision confidence</p>
+                  <div class="confidence-score" id="confidenceScore"></div>
+                  <p id="confidenceSummary"></p>
+                  <ul class="confidence-reasons" id="confidenceReasons"></ul>
+                </section>
+
+                <section class="decision-card transformation-card">
+                  <p class="card-label" data-award-i18n="transformationLabel">Before / After</p>
+                  <div class="transformation-grid">
+                    <div>
+                      <strong data-award-i18n="beforeLabel">Before</strong>
+                      <p id="beforeState"></p>
+                    </div>
+                    <div>
+                      <strong data-award-i18n="afterLabel">After</strong>
+                      <p id="afterState"></p>
+                    </div>
+                  </div>
+                </section>
+              </div>
             </div>
 
             <div class="tab-panel" data-panel="evidence" role="tabpanel" hidden>
@@ -183,5 +208,6 @@
     <!-- Paste the Novus.ai tracking snippet here before final deployment. -->
     <script src="app.js"></script>
     <script src="i18n.js"></script>
+    <script src="award.js"></script>
   </body>
 </html>
