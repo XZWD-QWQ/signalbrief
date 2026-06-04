@@ -1,0 +1,96 @@
+.product-tagline {
+  max-width: 540px;
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.96rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.decision-grid {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.9fr) minmax(260px, 1.1fr);
+  gap: 10px;
+}
+
+.decision-card {
+  padding: 16px;
+  border: 1px solid var(--line);
+  background: #fffdf8;
+}
+
+.confidence-card {
+  background: linear-gradient(180deg, rgba(15, 118, 110, 0.1), #fffdf8 64%);
+}
+
+.confidence-score {
+  margin: 4px 0 6px;
+  color: var(--teal);
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.confidence-card p {
+  margin-bottom: 10px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.confidence-reasons {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.confidence-reasons li {
+  position: relative;
+  padding-left: 16px;
+  color: var(--ink);
+  font-size: 0.88rem;
+  line-height: 1.35;
+}
+
+.confidence-reasons li::before {
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--teal);
+  content: "";
+}
+
+.transformation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.transformation-grid div {
+  min-height: 136px;
+  padding: 12px;
+  border: 1px solid rgba(16, 36, 47, 0.12);
+  background: #fbf8f1;
+}
+
+.transformation-grid strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.transformation-grid p {
+  margin-bottom: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+@media (max-width: 700px) {
+  .decision-grid,
+  .transformation-grid {
+    grid-template-columns: 1fr;
+  }
+}
